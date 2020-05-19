@@ -1,0 +1,25 @@
+# Checks security, runs unit tests, and deploys a Laravel app to Forge.
+# See https://git.luminfire.net/ops/tooling/ci/gitlab-ci-general/-/tree/master/laravel-app
+
+stages:
+  - test
+
+# Cache files for use between jobs and pipelines.
+cache:
+  key: $CI_BUILD_REF_NAME
+  paths:
+    - vendor
+    - node_modules
+    - public
+    - .npm
+
+Unit Tests:
+  stage: test
+  script:
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress
+    - ./vendor/phpunit/phpunit/phpunit -v --coverage-text --stderr
+  artifacts:
+    paths:
+      - ./storage/logs # Retain logs for debugging
+    expire_in: 7 days
+    when: on_failure
