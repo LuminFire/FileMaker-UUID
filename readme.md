@@ -13,7 +13,7 @@ $uuid = Uuid::numeric()->toString();
 
 A 41-digit delimited number of the form:
 
-*  `v-r-mmmmmmmmmmmmTsssssss-ccccc@nnnnnnnnnnnnnnn`
+*  `vrmmmmmmmmmmmmTssssssscccccnnnnnnnnnnnnnnn`
 *  With version 1 and 2 UUIDs, the sections of the UUID correspond to:
    *  `v`: The UUID version (type) number - 1
    *  `r`: A variant code reserved by the RFC 4122 standard - 2
