@@ -6,7 +6,7 @@ A package to generate a FileMaker-compatible numeric UUID.
 
 ```php
 use BrilliantPackages\FileMakerUuid\Uuid;
-$uuid = Uuid::numeric();
+$uuid = Uuid::numeric()->toString();
 ```
 
 ## Format
