@@ -25,7 +25,9 @@ class Uuid implements Serializable, JsonSerializable, Stringable
 			self::$instance = new Uuid($userId);
         }
 
-        self::$instance->setUserId($userId);
+        if (self::$instance->userId !== $userId) {
+            self::$instance = new Uuid($userId);
+        }
 
 		return self::$instance;
 	}
@@ -33,12 +35,15 @@ class Uuid implements Serializable, JsonSerializable, Stringable
     public function __construct(int|string $userId)
     {
         $this->userId = $userId;
+        $this->generate();
         return $this;
     }
 
-    public function setUserId($userId)
+    public function setUserId($userId): self
     {
         $this->userId = $userId;
+        $this->generate();
+        return $this;
     }
 
     public function __toString(): string
@@ -68,8 +73,7 @@ class Uuid implements Serializable, JsonSerializable, Stringable
 
     public static function numeric(int $userId = 0): self
     {
-        $uuid = self::getInstance($userId);
-        return $uuid->generate();
+        return self::getInstance($userId);
     }
 
     /**
