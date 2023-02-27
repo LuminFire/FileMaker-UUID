@@ -1,25 +1,19 @@
-# Checks security, runs unit tests, and deploys a Laravel app to Forge.
-# See https://git.luminfire.net/ops/tooling/ci/gitlab-ci-general/-/tree/master/laravel-app
+# Checks security, runs unit tests, and publishes a composer package
+# See https://git.luminfire.net/templates/gitlab/ci-templates/-/tree/master/composer-package
+#
+# See also:
+# - https://docs.gitlab.com/ee/user/packages/
+# - https://docs.gitlab.com/13.2/ee/user/packages/composer_repository/index.html
+# - https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Composer.gitlab-ci.yml
 
 stages:
+  - solcare
   - test
+  - build
 
-# Cache files for use between jobs and pipelines.
-cache:
-  key: $CI_BUILD_REF_NAME
-  paths:
-    - vendor
-    - node_modules
-    - public
-    - .npm
-
-Unit Tests:
-  stage: test
-  script:
-    - composer install --prefer-dist --no-ansi --no-interaction --no-progress
-    - ./vendor/phpunit/phpunit/phpunit -v --coverage-text --stderr
-  artifacts:
-    paths:
-      - ./storage/logs # Retain logs for debugging
-    expire_in: 7 days
-    when: on_failure
+include:
+  - project: 'templates/gitlab/ci-templates'
+    file:
+      - 'presets/php.yml'
+      - 'test/phpunit.yml'
+      - 'build/composer-package.yml'

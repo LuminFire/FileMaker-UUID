@@ -44,8 +44,8 @@ class UuidTest extends TestCase
  */
 class publicUuid extends Uuid
 {
-    public function getRandomDigits($num)
+    public function getRandomDigits(int $length): string
     {
-        return parent::getRandomDigits($num);
+        return parent::getRandomDigits($length);
     }
 }
