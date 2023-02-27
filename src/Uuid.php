@@ -2,47 +2,24 @@
 
 namespace BrilliantPackages\FileMakerUuid;
 
+use JsonSerializable;
+use Serializable;
+use Stringable;
+
 /**
  * FileMaker-compatible UUID.
  *
  * @since 1.0.0
  */
-class Uuid
+class Uuid implements Serializable, JsonSerializable, Stringable
 {
+    protected string $uuid;
 
-    /**
-     * Generated UUID.
-     *
-     * @since 1.0.0
-     *
-     * @var string $uuid
-     */
-    public $uuid;
+    protected int|string $userId;
 
-    /**
-     * User ID for randomness.
-     *
-     * @var int|string $userId
-     */
-    protected $userId;
-
-	/**
-	 * Class instance.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var Uuid
-	 */
 	private static $instance = null;
 
-	/**
-	 * Return only one instance of this class.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return Uuid class.
-	 */
-    public static function getInstance($userId = 0)
+    public static function getInstance(int $userId = 0): self
     {
 		if (null === self::$instance) {
 			self::$instance = new Uuid($userId);
@@ -53,14 +30,7 @@ class Uuid
 		return self::$instance;
 	}
 
-	/**
-	 * Register actions and hooks.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return Uuid
-	 */
-    public function __construct($userId)
+    public function __construct(int|string $userId)
     {
         $this->userId = $userId;
         return $this;
@@ -71,56 +41,32 @@ class Uuid
         $this->userId = $userId;
     }
 
-    /**
-     * Converts the UUID to a string.
-     *
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->toString();
     }
 
-    /**
-     * Converts the UUID to a string for JSON serialization.
-     *
-     * @return string
-     */
     public function jsonSerialize(): string
     {
         return $this->toString();
     }
 
-    /**
-     * Converts the UUID to a string for PHP serialization.
-     *
-     * @return string
-     */
     public function serialize(): string
     {
         return $this->toString();
     }
 
-    /**
-     * Returns UUID as a string.
-     *
-     * @return string
-     */
+    public function unserialize($value): void
+    {
+        $this->uuid = $value;
+    }
+
     public function toString(): string
     {
         return (string) $this->uuid;
     }
 
-    /**
-     * Generate a numeric UUID.
-     *
-     * @since 1.0.0
-     *
-     * @param int $userId
-     *
-     * @return Uuid
-     */
-    public static function numeric($userId = 0)
+    public static function numeric(int $userId = 0): self
     {
         $uuid = self::getInstance($userId);
         return $uuid->generate();
@@ -164,29 +110,20 @@ class Uuid
         return $this;
     }
 
-    /**
-     * Generate random digits in place of a user ID.
-     *
-     * @since 1.0.0
-     *
-     * @param int $num Number of digits to return.
-     *
-     * @return string
-     */
-    protected function getRandomDigits($num)
+    protected function getRandomDigits(int $length): string
     {
         if (! empty($this->userId)) {
-            if (strlen($this->userId) > $num) {
-                return substr($this->userId, (0 - $num), $num);
+            if (strlen($this->userId) > $length) {
+                return substr($this->userId, (0 - $length), $length);
             } else {
-                return str_pad($this->userId, $num, 0, STR_PAD_LEFT);
+                return str_pad($this->userId, $length, 0, STR_PAD_LEFT);
             }
         }
 
 		$digits = 0;
-		while (0 === $digits || strlen($digits) < $num) {
-			$digits .= (int) sprintf('%F', hexdec(bin2hex(openssl_random_pseudo_bytes($num))));
+		while (0 === $digits || strlen($digits) < $length) {
+			$digits .= (int) sprintf('%F', hexdec(bin2hex(openssl_random_pseudo_bytes($length))));
 		}
-		return substr($digits, 0, $num);
+		return substr($digits, 0, $length);
     }
 }
