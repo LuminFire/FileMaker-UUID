@@ -2,6 +2,13 @@
 
 A package to generate a FileMaker-compatible numeric UUID.
 
+## Compatibility
+
+| PHP   | Package Version |
+| -----:| ---------------:|
+| >=8.0 |             2.x |
+|   7.x |             1.x |
+
 ## Usage
 
 ```php
